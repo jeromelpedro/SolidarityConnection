@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-Solidarity.Worker-59bd6252-18bd-43e2-ae68-a2389c3beba5</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.5" />
+    <PackageReference Include="RabbitMQ.Client" Version="7.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Solidarity.Application\Solidarity.Application.csproj" />
+    <ProjectReference Include="..\Solidarity.Infrastructure\Solidarity.Infrastructure.csproj" />
+    <ProjectReference Include="..\Solidarity.Shared\Solidarity.Shared.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-appsettings
+  namespace: solidarity
+data:
+  appsettings.json: |
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*",
+      "ConnectionStrings": {
+        "SqlServer": "Server=sqlserver,1433;Database=SolidarityConnectionDb;User Id=sa;Password=Solidarity@123;TrustServerCertificate=True;"
+      },
+      "MongoDb": {
+        "ConnectionString": "mongodb://mongodb:27017",
+        "DatabaseName": "solidarity-db"
+      },
+      "RabbitMq": {
+        "Host": "rabbitmq",
+        "Username": "guest",
+        "Password": "guest"
+      },
+      "Jwt": {
+        "Key": "THIS_IS_A_SECRET_KEY_FOR_SOLIDARITY_CONNECTION_2026",
+        "Issuer": "SolidarityConnection",
+        "Audience": "SolidarityConnection"
+      }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: worker-appsettings
+  namespace: solidarity
+data:
+  appsettings.json: |
+    {
+      "ConnectionStrings": {
+        "SqlServer": "Server=sqlserver,1433;Database=SolidarityConnectionDb;User Id=sa;Password=Solidarity@123;TrustServerCertificate=True;"
+      },
+      "RabbitMq": {
+        "Host": "rabbitmq",
+        "Username": "guest",
+        "Password": "guest"
+      }
+    }

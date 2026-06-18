@@ -59,6 +59,7 @@ O sistema permite o gerenciamento de campanhas beneficentes, cadastro de doadore
 - Swagger
 - Docker
 - Docker Compose
+- Kubernetes
 
 ---
 
@@ -73,6 +74,7 @@ SolidarityConnection
 ├── Solidarity.Infrastructure
 ├── Solidarity.Shared
 ├── Solidarity.Worker
+├── k8s
 └── docker-compose.yml
 ```
 
@@ -152,6 +154,107 @@ solidarity-rabbitmq
 
 ---
 
+# Executando com Kubernetes (Docker Desktop)
+
+## Pré-requisitos
+
+- Docker Desktop com Kubernetes habilitado;
+- kubectl disponível no terminal.
+
+Verificar:
+
+```bash
+kubectl version --client
+kubectl config current-context
+```
+
+Contexto esperado no Docker Desktop:
+
+```text
+docker-desktop
+```
+
+## 1) Gerar imagens locais da API e Worker
+
+Na raiz do projeto:
+
+```bash
+docker build -t solidarity-api:local -f Solidarity.Api/Dockerfile .
+docker build -t solidarity-worker:local -f Solidarity.Worker/Dockerfile .
+```
+
+## 2) Aplicar manifests Kubernetes
+
+```bash
+kubectl apply -k k8s
+```
+
+Os manifests entregues em `k8s/` incluem:
+
+- Namespace;
+- ConfigMaps;
+- Deployments;
+- Services.
+- PersistentVolumeClaims (SQL Server, MongoDB e RabbitMQ).
+
+## 3) Validar recursos no cluster
+
+```bash
+kubectl get pods -n solidarity
+kubectl get svc -n solidarity
+kubectl get pvc -n solidarity
+```
+
+## 4) Acessar API e RabbitMQ
+
+Mapear a porta local para o Service da API:
+
+```bash
+kubectl port-forward -n solidarity svc/solidarity-api 8080:8080
+```
+
+API:
+
+```text
+http://localhost:8080/swagger
+```
+
+Swagger:
+
+```text
+http://localhost:8080/swagger
+```
+
+RabbitMQ Management:
+
+```bash
+kubectl port-forward -n solidarity svc/rabbitmq 15672:15672
+```
+
+```text
+http://localhost:15672
+```
+
+Usuário/senha padrão:
+
+```text
+guest / guest
+```
+
+## 5) Remover ambiente Kubernetes
+
+```bash
+kubectl delete namespace solidarity
+```
+
+Para remover tambem os dados persistidos:
+
+```bash
+kubectl delete pvc -n solidarity --all
+```
+
+---
+
 # RabbitMQ Management
 
 URL:
@@ -183,7 +286,7 @@ dotnet ef database update \
 
 ---
 
-# Executando a API
+# Executando a API localmente
 
 ```bash
 dotnet run --project Solidarity.Api
@@ -197,7 +300,7 @@ http://localhost:5131/swagger
 
 ---
 
-# Executando o Worker
+# Executando o Worker localmente
 
 Em outro terminal:
 

@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: solidarity-api
+  namespace: solidarity
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: solidarity-api
+  template:
+    metadata:
+      labels:
+        app: solidarity-api
+    spec:
+      initContainers:
+        - name: wait-for-sqlserver
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - until nc -z sqlserver 1433; do echo waiting for sqlserver; sleep 2; done
+        - name: wait-for-mongodb
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - until nc -z mongodb 27017; do echo waiting for mongodb; sleep 2; done
+        - name: wait-for-rabbitmq
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done
+      containers:
+        - name: solidarity-api
+          image: solidarity-api:local
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: api-appsettings
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json
+          readinessProbe:
+            httpGet:
+              path: /swagger/index.html
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /swagger/index.html
+              port: 8080
+            initialDelaySeconds: 40
+            periodSeconds: 20
+      volumes:
+        - name: api-appsettings
+          configMap:
+            name: api-appsettings
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: solidarity-api
+  namespace: solidarity
+spec:
+  selector:
+    app: solidarity-api
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080

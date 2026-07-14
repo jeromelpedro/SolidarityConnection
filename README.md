@@ -286,15 +286,25 @@ VITE_API_URL=http://localhost:8080
 
 ## Telas
 
-- `/` — Painel de Transparência (público): campanhas ativas, meta e valor arrecadado.
-  O botão **Doar agora** aparece para doadores autenticados;
+- `/` — **Site institucional**: hero, indicadores de impacto, história da ONG,
+  como ajudar, prévia das campanhas ativas, depoimentos, parceiros e chamada final;
+- `/campanhas` — **Painel de Transparência** (público): campanhas ativas, meta e
+  valor arrecadado. O botão **Doar agora** aparece para doadores autenticados;
+- `/sobre` — missão, visão, valores e linha do tempo da organização;
+- `/contato` — canais de contato e formulário (ilustrativo);
 - `/cadastro` — cadastro de doador: máscara de CPF, requisitos de senha exibidos
   em tempo real e confirmação de senha;
 - `/login` — autenticação (JWT);
 - `/gestor` — gestão de campanhas (restrito à role NgoManager): criar, editar e cancelar.
 
+> O conteúdo institucional (história, depoimentos, parceiros e números de atuação)
+> é ilustrativo. Os indicadores de campanhas e valores arrecadados vêm da API.
+
 ## Detalhes de usabilidade
 
+- **Responsivo** (mobile, tablet e desktop), com menu hamburguer abaixo de 1024px;
+- Ilustrações em **SVG inline**, sem dependência de CDN ou de imagens externas —
+  a interface continua íntegra mesmo sem internet;
 - Campos de valor (doação e meta financeira) usam **máscara monetária pt-BR**:
   digite apenas números e o campo formata automaticamente (`150000` → `1.500,00`);
 - O campo de senha mostra os requisitos abaixo dele, marcados conforme são atendidos;

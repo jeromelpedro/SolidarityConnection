@@ -2,6 +2,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { Layout } from './components/Layout'
 import { RequireRole } from './components/RequireRole'
+import { Home } from './pages/Home'
+import { About } from './pages/About'
+import { Contact } from './pages/Contact'
 import { TransparencyPanel } from './pages/TransparencyPanel'
 import { Login } from './pages/Login'
 import { Register } from './pages/Register'
@@ -13,7 +16,10 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
-            <Route index element={<TransparencyPanel />} />
+            <Route index element={<Home />} />
+            <Route path="campanhas" element={<TransparencyPanel />} />
+            <Route path="sobre" element={<About />} />
+            <Route path="contato" element={<Contact />} />
             <Route path="login" element={<Login />} />
             <Route path="cadastro" element={<Register />} />
 

@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { campaignService } from '../services/campaign.service'
 import { donationService } from '../services/donation.service'
 import { useAuth } from '../hooks/useAuth'
-import { ProgressBar } from '../components/ProgressBar'
-import { Alert, Button, Card, Field, currency } from '../components/ui'
+import { CampaignCard } from '../components/CampaignCard'
+import { Alert, Button, Card, Field } from '../components/ui'
 import { ApiError } from '../services/http'
 import { maskMoney, parseMoney } from '../utils/masks'
 import type { ActiveCampaign } from '../types'
@@ -111,7 +111,7 @@ export function TransparencyPanel() {
           Painel de Transparência
         </p>
 
-        <h1 className="text-glow text-4xl font-bold text-white sm:text-5xl">
+        <h1 className="text-glow text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
           Campanhas ativas
         </h1>
 
@@ -139,34 +139,13 @@ export function TransparencyPanel() {
           </p>
         </Card>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {campaigns.map((campaign, index) => (
-            <Card
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {campaigns.map((campaign) => (
+            <CampaignCard
               key={campaign.id}
-              className="glass-hover animate-rise flex flex-col gap-5"
+              campaign={campaign}
+              pending={pendingIds.includes(campaign.id)}
             >
-              <div style={{ animationDelay: `${index * 60}ms` }}>
-                <h2 className="text-lg font-semibold text-white">
-                  {campaign.title}
-                </h2>
-              </div>
-
-              <div className="space-y-1">
-                <p className="text-2xl font-bold text-neon">
-                  {currency(campaign.totalRaised)}
-                </p>
-
-                <p className="text-xs text-slate-500">
-                  de {currency(campaign.financialGoal)} de meta
-                </p>
-              </div>
-
-              <ProgressBar
-                raised={campaign.totalRaised}
-                goal={campaign.financialGoal}
-                pending={pendingIds.includes(campaign.id)}
-              />
-
               {isDonor && selectedId !== campaign.id && (
                 <Button onClick={() => setSelectedId(campaign.id)}>
                   Doar agora
@@ -218,8 +197,7 @@ export function TransparencyPanel() {
                   </div>
                 </div>
               )}
-
-            </Card>
+            </CampaignCard>
           ))}
         </div>
       )}

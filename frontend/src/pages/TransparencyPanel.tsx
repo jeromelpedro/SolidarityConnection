@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { campaignService } from '../services/campaign.service'
 import { donationService } from '../services/donation.service'
 import { useAuth } from '../hooks/useAuth'
@@ -16,7 +17,8 @@ const REFRESH_INTERVAL_MS = 1500
 const REFRESH_ATTEMPTS = 8
 
 export function TransparencyPanel() {
-  const { isAuthenticated, isDonor } = useAuth()
+  const { isAuthenticated, isDonor, isManager } = useAuth()
+  const navigate = useNavigate()
 
   const [campaigns, setCampaigns] = useState<ActiveCampaign[]>([])
   const [loading, setLoading] = useState(true)
@@ -86,7 +88,7 @@ export function TransparencyPanel() {
       setSelectedId(null)
       setAmount('')
       setFeedback(
-        'Doação enviada! O evento foi publicado na fila — acompanhe a barra subir.',
+        'Doação recebida! Estamos confirmando o pagamento — o valor aparece na barra em instantes.',
       )
 
       watchWorker(campaignId)
@@ -113,8 +115,8 @@ export function TransparencyPanel() {
         </h1>
 
         <p className="max-w-2xl text-slate-400">
-          Todo valor arrecadado é atualizado de forma assíncrona pelo Worker,
-          após o processamento da fila de doações.
+          Acompanhe em tempo real quanto cada campanha já arrecadou. Toda doação é
+          confirmada em instantes e o valor aparece aqui automaticamente.
         </p>
       </header>
 
@@ -170,6 +172,21 @@ export function TransparencyPanel() {
                 </Button>
               )}
 
+              {/* Visitante: leva direto ao login, em vez de so esconder o botao. */}
+              {!isAuthenticated && (
+                <Button variant="ghost" onClick={() => navigate('/login')}>
+                  Entrar para doar
+                </Button>
+              )}
+
+              {/* Gestor nao doa: a API restringe doacoes ao perfil Doador. */}
+              {isManager && (
+                <p className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs text-slate-400">
+                  Você está conectado como <strong>gestor</strong>. Doações são
+                  feitas por contas de <strong>doador</strong>.
+                </p>
+              )}
+
               {isDonor && selectedId === campaign.id && (
                 <div className="space-y-3 border-t border-white/10 pt-4">
                   <Field
@@ -201,11 +218,6 @@ export function TransparencyPanel() {
                 </div>
               )}
 
-              {!isAuthenticated && (
-                <p className="text-xs text-slate-500">
-                  Faça login como doador para contribuir.
-                </p>
-              )}
             </Card>
           ))}
         </div>

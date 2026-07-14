@@ -2,17 +2,9 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { authService } from '../services/auth.service'
 import { Alert, Button, Card, Field } from '../components/ui'
+import { PasswordRules, isPasswordStrong } from '../components/PasswordRules'
 import { ApiError } from '../services/http'
-
-/** Mascara 000.000.000-00. O backend aceita com ou sem mascara. */
-function maskCpf(value: string): string {
-  const digits = value.replace(/\D/g, '').slice(0, 11)
-
-  return digits
-    .replace(/(\d{3})(\d)/, '$1.$2')
-    .replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
-    .replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4')
-}
+import { maskCpf } from '../utils/masks'
 
 export function Register() {
   const navigate = useNavigate()
@@ -21,11 +13,28 @@ export function Register() {
   const [email, setEmail] = useState('')
   const [cpf, setCpf] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmation, setConfirmation] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const passwordsMatch =
+    confirmation.length > 0 && password === confirmation
+
+  const canSubmit =
+    isPasswordStrong(password) && passwordsMatch
+
   async function submit(event: React.FormEvent) {
     event.preventDefault()
+
+    if (!isPasswordStrong(password)) {
+      setError('A senha não atende aos requisitos abaixo.')
+      return
+    }
+
+    if (!passwordsMatch) {
+      setError('A confirmação de senha não confere.')
+      return
+    }
 
     setLoading(true)
     setError('')
@@ -35,7 +44,7 @@ export function Register() {
 
       navigate('/login')
     } catch (err) {
-      // A API valida CPF e e-mail unico; propagamos a mensagem dela.
+      // A API valida CPF, forca da senha e e-mail unico; propagamos a mensagem dela.
       setError(
         err instanceof ApiError
           ? err.message
@@ -52,9 +61,7 @@ export function Register() {
         <header className="space-y-2">
           <h1 className="text-2xl font-bold text-white">Criar conta</h1>
 
-          <p className="text-sm text-slate-400">
-            Cadastro público de doador.
-          </p>
+          <p className="text-sm text-slate-400">Cadastro público de doador.</p>
         </header>
 
         {error && <Alert kind="error" message={error} />}
@@ -87,16 +94,48 @@ export function Register() {
             onChange={(e) => setCpf(maskCpf(e.target.value))}
           />
 
-          <Field
-            id="password"
-            label="Senha"
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className="space-y-2">
+            <Field
+              id="password"
+              label="Senha"
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
-          <Button type="submit" loading={loading} className="w-full">
+            <PasswordRules value={password} />
+          </div>
+
+          <div className="space-y-1.5">
+            <Field
+              id="confirmation"
+              label="Confirmar senha"
+              type="password"
+              required
+              value={confirmation}
+              onChange={(e) => setConfirmation(e.target.value)}
+            />
+
+            {confirmation.length > 0 && (
+              <p
+                className={`text-xs ${
+                  passwordsMatch ? 'text-success' : 'text-danger'
+                }`}
+              >
+                {passwordsMatch
+                  ? 'As senhas conferem.'
+                  : 'As senhas não conferem.'}
+              </p>
+            )}
+          </div>
+
+          <Button
+            type="submit"
+            loading={loading}
+            disabled={!canSubmit}
+            className="w-full"
+          >
             Cadastrar
           </Button>
         </form>

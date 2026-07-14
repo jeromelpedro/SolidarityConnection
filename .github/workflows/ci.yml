@@ -240,7 +240,9 @@ jobs:
               TYPE="${pair%%:*}"
               TITLE="${pair##*:}"
 
-              ENTRIES=$(git log $RANGE --format='%s' \
+              # ${RANGE:+"$RANGE"} expande para nada quando RANGE e vazio
+              # (primeira release: nao ha tag anterior para delimitar o intervalo).
+              ENTRIES=$(git log ${RANGE:+"$RANGE"} --format='%s' \
                 | grep -E "^${TYPE}(\([^)]+\))?!?:" \
                 | sed -E "s/^${TYPE}(\([^)]+\))?!?:[[:space:]]*//" \
                 | sed 's/^/- /' || true)

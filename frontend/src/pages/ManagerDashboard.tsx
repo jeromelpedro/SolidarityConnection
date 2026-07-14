@@ -126,7 +126,7 @@ export function ManagerDashboard() {
           Área do Gestor
         </p>
 
-        <h1 className="text-glow text-3xl font-bold text-white">
+        <h1 className="text-glow text-2xl font-bold text-white sm:text-3xl">
           Gestão de campanhas
         </h1>
       </header>
@@ -134,7 +134,7 @@ export function ManagerDashboard() {
       {error && <Alert kind="error" message={error} />}
       {success && <Alert kind="success" message={success} />}
 
-      <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(320px,380px)_1fr]">
         <Card className="animate-rise h-fit space-y-4">
           <h2 className="font-semibold text-white">
             {editingId ? 'Editar campanha' : 'Nova campanha'}
@@ -251,7 +251,7 @@ export function ManagerDashboard() {
                   goal={campaign.financialGoal}
                 />
 
-                <div className="flex gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row">
                   <Button variant="ghost" onClick={() => edit(campaign)}>
                     Editar
                   </Button>

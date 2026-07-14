@@ -14,14 +14,7 @@ Para alterar a versão, use o script — ele mantém `VERSION`, `.env`,
 
 ## [1.1.0] — 2026-07-14
 
-### Adicionado
-
-- versionamento semantico automatico a cada push na main
-
-### Corrigido
-
-- corrige cache do frontend no nginx e commit de release no CI
-- protege intervalo vazio na geracao das notas da release
+Primeira release publicada pelo pipeline automático.
 
 ### Imagens publicadas
 
@@ -30,9 +23,6 @@ ghcr.io/pedrojeromel/solidarity-api:1.1.0
 ghcr.io/pedrojeromel/solidarity-worker:1.1.0
 ghcr.io/pedrojeromel/solidarity-frontend:1.1.0
 ```
----
-
-## [1.1.0] — 2026-07-14
 
 ### Adicionado
 
@@ -58,7 +48,11 @@ ghcr.io/pedrojeromel/solidarity-frontend:1.1.0
 - `zabbix-init` falhava por quebras de linha CRLF e o Zabbix nunca era
   configurado (host e template não eram criados);
 - Healthcheck da API no Compose usava `wget`, ausente na imagem `aspnet`,
-  marcando o container como `unhealthy` mesmo com a API respondendo.
+  marcando o container como `unhealthy` mesmo com a API respondendo;
+- `index.html` era servido sem `Cache-Control`, fazendo o navegador manter o
+  bundle da versão anterior após um deploy;
+- Arquivos inexistentes em `/assets/` caíam no fallback do SPA e retornavam
+  HTML com status 200 no lugar de 404.
 
 ---
 

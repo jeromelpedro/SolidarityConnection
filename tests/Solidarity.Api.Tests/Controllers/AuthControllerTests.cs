@@ -40,7 +40,33 @@ public class AuthControllerTests : IDisposable
             FullName = "Doador Teste",
             Email = "doador@solidarity.com",
             Cpf = cpf,
-            Password = "123456"
+            Password = "Solidaria@2026"
+        };
+
+        // Act
+        var result = await _controller.Register(request);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(result);
+
+        Assert.False(await _context.Users.AnyAsync());
+    }
+
+    [Theory]
+    [InlineData("123456")]          // curta, sem letra e sem especial
+    [InlineData("solidaria")]       // sem numero e sem especial
+    [InlineData("Solidaria2026")]   // sem caractere especial
+    [InlineData("12345678@")]       // sem letra
+    public async Task Register_WhenPasswordIsWeak_ReturnsBadRequestAndDoesNotPersistUser(
+        string password)
+    {
+        // Arrange
+        var request = new RegisterRequest
+        {
+            FullName = "Doador Teste",
+            Email = "doador@solidarity.com",
+            Cpf = "52998224725",
+            Password = password
         };
 
         // Act
@@ -61,7 +87,7 @@ public class AuthControllerTests : IDisposable
             FullName = "Doador Teste",
             Email = "doador@solidarity.com",
             Cpf = "529.982.247-25",
-            Password = "123456"
+            Password = "Solidaria@2026"
         };
 
         // Act
@@ -79,7 +105,7 @@ public class AuthControllerTests : IDisposable
     public async Task Register_WhenRequestIsValid_StoresHashedPassword()
     {
         // Arrange
-        const string password = "123456";
+        const string password = "Solidaria@2026";
 
         var request = new RegisterRequest
         {
@@ -110,7 +136,7 @@ public class AuthControllerTests : IDisposable
             FullName = "Doador Teste",
             Email = "doador@solidarity.com",
             Cpf = "52998224725",
-            Password = "123456"
+            Password = "Solidaria@2026"
         };
 
         // Act
@@ -136,7 +162,7 @@ public class AuthControllerTests : IDisposable
             FullName = "Outro Doador",
             Email = "doador@solidarity.com",
             Cpf = "11144477735",
-            Password = "123456"
+            Password = "Solidaria@2026"
         };
 
         // Act
@@ -157,7 +183,7 @@ public class AuthControllerTests : IDisposable
         await GivenUser(
             new UserBuilder()
                 .WithEmail("doador@solidarity.com")
-                .WithPassword("123456")
+                .WithPassword("Solidaria@2026")
                 .Build());
 
         _jwt.Setup(x => x.Generate(It.IsAny<User>()))
@@ -166,7 +192,7 @@ public class AuthControllerTests : IDisposable
         var request = new LoginRequest
         {
             Email = "doador@solidarity.com",
-            Password = "123456"
+            Password = "Solidaria@2026"
         };
 
         // Act
@@ -191,7 +217,7 @@ public class AuthControllerTests : IDisposable
         await GivenUser(
             new UserBuilder()
                 .WithEmail("doador@solidarity.com")
-                .WithPassword("123456")
+                .WithPassword("Solidaria@2026")
                 .Build());
 
         var request = new LoginRequest
@@ -218,7 +244,7 @@ public class AuthControllerTests : IDisposable
         var request = new LoginRequest
         {
             Email = "inexistente@solidarity.com",
-            Password = "123456"
+            Password = "Solidaria@2026"
         };
 
         // Act

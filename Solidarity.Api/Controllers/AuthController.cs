@@ -29,6 +29,13 @@ public class AuthController : ControllerBase
         if (!CpfValidator.IsValid(request.Cpf))
             return BadRequest("Invalid CPF.");
 
+        var passwordViolations =
+            PasswordPolicy.Validate(request.Password);
+
+        if (passwordViolations.Count > 0)
+            return BadRequest(
+                string.Join(" ", passwordViolations));
+
         if (await _context.Users
             .AnyAsync(x => x.Email == request.Email))
         {

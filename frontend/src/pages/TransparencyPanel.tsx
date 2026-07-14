@@ -6,6 +6,7 @@ import { useAuth } from '../hooks/useAuth'
 import { ProgressBar } from '../components/ProgressBar'
 import { Alert, Button, Card, Field, currency } from '../components/ui'
 import { ApiError } from '../services/http'
+import { maskMoney, parseMoney } from '../utils/masks'
 import type { ActiveCampaign } from '../types'
 
 /**
@@ -72,9 +73,9 @@ export function TransparencyPanel() {
   )
 
   async function donate(campaignId: string) {
-    const value = Number(amount.replace(',', '.'))
+    const value = parseMoney(amount)
 
-    if (!Number.isFinite(value) || value <= 0) {
+    if (value <= 0) {
       setFeedback('Informe um valor maior que zero.')
       return
     }
@@ -192,11 +193,11 @@ export function TransparencyPanel() {
                   <Field
                     id={`amount-${campaign.id}`}
                     label="Valor da doação (R$)"
-                    inputMode="decimal"
-                    placeholder="150,00"
+                    inputMode="numeric"
+                    placeholder="0,00"
                     value={amount}
                     autoFocus
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={(e) => setAmount(maskMoney(e.target.value))}
                   />
 
                   <div className="flex gap-2">

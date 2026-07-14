@@ -3,6 +3,7 @@ import { campaignService } from '../services/campaign.service'
 import { ProgressBar } from '../components/ProgressBar'
 import { Alert, Button, Card, Field, currency } from '../components/ui'
 import { ApiError } from '../services/http'
+import { maskMoney, parseMoney, toMoneyInput } from '../utils/masks'
 import { CampaignStatus, type Campaign, type CreateCampaignInput } from '../types'
 
 const STATUS_LABEL: Record<number, string> = {
@@ -67,7 +68,7 @@ export function ManagerDashboard() {
       // A API espera datetime; o input date entrega apenas a data.
       startDate: new Date(`${form.startDate}T00:00:00`).toISOString(),
       endDate: new Date(`${form.endDate}T23:59:59`).toISOString(),
-      financialGoal: Number(form.financialGoal.replace(',', '.')),
+      financialGoal: parseMoney(form.financialGoal),
     }
 
     try {
@@ -103,7 +104,7 @@ export function ManagerDashboard() {
       description: campaign.description,
       startDate: campaign.startDate.slice(0, 10),
       endDate: campaign.endDate.slice(0, 10),
-      financialGoal: String(campaign.financialGoal),
+      financialGoal: toMoneyInput(campaign.financialGoal),
     })
   }
 
@@ -183,12 +184,15 @@ export function ManagerDashboard() {
             <Field
               id="financialGoal"
               label="Meta financeira (R$)"
-              inputMode="decimal"
+              inputMode="numeric"
               required
-              placeholder="10000"
+              placeholder="0,00"
               value={form.financialGoal}
               onChange={(e) =>
-                setForm({ ...form, financialGoal: e.target.value })
+                setForm({
+                  ...form,
+                  financialGoal: maskMoney(e.target.value),
+                })
               }
             />
 

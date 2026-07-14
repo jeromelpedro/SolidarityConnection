@@ -29,7 +29,7 @@ export function ProgressBar({ raised, goal, pending = false }: ProgressBarProps)
 
         {pending && (
           <span className="animate-pulse-glow font-medium text-magenta">
-            processando na fila...
+            confirmando doação...
           </span>
         )}
       </div>

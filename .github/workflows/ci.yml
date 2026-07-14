@@ -294,7 +294,8 @@ jobs:
         run: |
           set -e
 
-          git add VERSION .env CHANGELOG.md frontend/package.json k8s/kustomization.yaml
+          # .env fica de fora: e ignorado pelo git (arquivo local de cada maquina).
+          git add VERSION CHANGELOG.md frontend/package.json k8s/kustomization.yaml
 
           # "chore(release)" é o guarda que impede este commit de disparar outra release.
           git commit -m "chore(release): ${VERSION} [skip ci]" || echo "Nada a commitar."

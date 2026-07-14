@@ -192,9 +192,43 @@ dotnet --version
 
 # Executando com Docker Compose
 
-## 1) Subir os serviços
+## Forma recomendada (script)
 
-Na raiz do projeto:
+O script sobe a aplicação sempre na versão correta e **confirma no final qual
+versão ficou de fato em execução**:
+
+```bash
+./scripts/deploy.sh                 # constrói as imagens a partir do código-fonte
+./scripts/deploy.sh --ghcr          # baixa as imagens publicadas pelo CI (GHCR)
+./scripts/deploy.sh --ghcr 1.1.0    # baixa uma versão específica (rollback)
+```
+
+Saída esperada:
+
+```text
+================ EM EXECUCAO ================
+  API      : {"service":"Solidarity.Api","version":"1.1.3", ...}
+  Worker   : Solidarity.Worker versao 1.1.3 iniciado.
+  Frontend : http://localhost:3001
+
+OK: a versao em execucao (1.1.3) confere com a versao alvo.
+```
+
+Se a versão em execução divergir da esperada, o script falha — em vez de deixar
+passar silenciosamente.
+
+**Dois modos, quando usar cada um:**
+
+| Modo | O que faz | Quando usar |
+|---|---|---|
+| padrão (local) | Compila o código atual e gera a imagem | Desenvolvimento; validar o que está no seu working tree |
+| `--ghcr` | Baixa a imagem publicada pelo pipeline | Validar exatamente o artefato do CI; rollback |
+
+> O `.env` (que define `APP_VERSION`) é ignorado pelo git e **não vem no `git pull`**.
+> Por isso o script sempre o ressincroniza a partir do arquivo `VERSION` — sem isso,
+> é fácil o Compose subir uma versão diferente da que está no repositório.
+
+## Subindo tudo manualmente
 
 ```bash
 docker compose up -d

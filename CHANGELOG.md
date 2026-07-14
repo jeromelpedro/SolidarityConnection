@@ -12,6 +12,21 @@ Para alterar a versão, use o script — ele mantém `VERSION`, `.env`,
 
 ---
 
+## [1.2.1] — 2026-07-14
+
+### Corrigido
+
+- efeito devolvia valor e o React o chamava como funcao de limpeza
+
+### Imagens publicadas
+
+```text
+ghcr.io/pedrojeromel/solidarity-api:1.2.1
+ghcr.io/pedrojeromel/solidarity-worker:1.2.1
+ghcr.io/pedrojeromel/solidarity-frontend:1.2.1
+```
+---
+
 ## [1.2.0] — 2026-07-14
 
 ### Adicionado

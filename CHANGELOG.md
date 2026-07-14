@@ -12,6 +12,21 @@ Para alterar a versão, use o script — ele mantém `VERSION`, `.env`,
 
 ---
 
+## [1.1.3] — 2026-07-14
+
+### Corrigido
+
+- publica sourcemap e corrige clearTimeout desacoplado
+
+### Imagens publicadas
+
+```text
+ghcr.io/pedrojeromel/solidarity-api:1.1.3
+ghcr.io/pedrojeromel/solidarity-worker:1.1.3
+ghcr.io/pedrojeromel/solidarity-frontend:1.1.3
+```
+---
+
 ## [1.1.2] — 2026-07-14
 
 ### Corrigido
